@@ -27,13 +27,19 @@ io.on("connection", (client) => {
     client.emit("getRooms");
 
     client.on("createRoom", (room) => {
-        Room.addRoom(room.name).then(res => {
+        Room.addRoom(room.name, client.id).then(res => {
             client.broadcast.emit("getRooms");
             client.emit("createRoom", {...room, id: res.insertId});
         });
     })
-
+    
+    client.on("logout", (id) => {
+        console.log(id);
+    })
     client.on("disconnect", () => {
-        console.log(`new disconnected`);
+        console.log(`new disconnected (${client.id})`);
+        Room.deleteRoomByUserId(client.id).then(res => {
+            client.broadcast.emit("getRooms");
+        })
     });
 })
