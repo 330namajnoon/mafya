@@ -4,7 +4,7 @@ import Room from "./Room";
 
 export default class GameState {
     god: God | null = null;
-    status: "START" | "GOD" | "USER" = "START";
+    status: "START" | "GOD" | "USER" = "GOD";
     rooms!: Room[] | null;
     currentRoom: GameRoom | null = null;
 
