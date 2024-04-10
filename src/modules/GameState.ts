@@ -1,12 +1,17 @@
+import Avatars, { Avatar } from "./Avatars";
 import GameRoom from "./GameRoom";
 import God from "./God";
 import Room from "./Room";
 
 export default class GameState {
+    avatars: Avatars = new Avatars([
+        new Avatar("avatar001", "/assets/avatar001.png"),
+        new Avatar("avatar002", "/assets/avatar002.png"),
+    ]);
     god: God | null = null;
     status: "START" | "GOD" | "USER" = "GOD";
     rooms!: Room[] | null;
-    currentRoom: GameRoom | null = null;
+    currentRoom: GameRoom | null = new GameRoom({id: 0, name: "Mi sala"}, new God("Sina"));
 
     setState: (state: GameState) => void;
 

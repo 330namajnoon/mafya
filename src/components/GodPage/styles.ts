@@ -11,5 +11,24 @@ export const Background = styled.div`
     background-size: cover;
     display: flex;
     align-items: center;
+    justify-content: center;    
+`;
+
+export const BackgroundTransparent = styled.div`
+    width: 100%;
+    height: 100%;
+    background-color: ${colors[1]};
+    display: flex;
+    align-items: center;
     justify-content: center;
+`;
+
+export const UserCards = styled.div`
+    width: 95%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    box-sizing: border-box;
+
 `;

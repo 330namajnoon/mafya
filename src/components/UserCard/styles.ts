@@ -1,0 +1,42 @@
+import styled from "styled-components";
+import { colors } from "../../config";
+
+export const Background = styled.div<{width: number, height: number}>`
+    position: relative;
+    min-width: ${(props) => props.width}px;
+    height: ${(props) => props.height}px;
+    background-color: ${colors[4]};
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    margin-left: 5px;
+    img {
+        max-width: 100%;
+    }
+    
+    h3 {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        font-size: ${(props) => props.width / 10}px;
+        color: ${colors[2]};
+    }
+    `;
+
+export const Role = styled.div<{width: number}>`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    
+    h2 {
+        margin-top: 10px;
+        font-size: ${(props) => props.width / 10}px;
+        background-color: transparent;
+        border: solid 0.5px ${colors[2]};
+        padding: 5px 10px;
+        color: ${colors[2]};
+        border-radius: 100vw;
+    }
+`;
