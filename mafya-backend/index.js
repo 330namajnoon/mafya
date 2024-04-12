@@ -19,12 +19,14 @@ server.app.get("/", (req, res) => {
     res.send(`server is up on port ${port}!`);
 })
 
-const rooms = [];
-
 io.on("connection", (client) => {
     console.log(`new connected (${client.id})`);
 
     client.emit("getRooms");
+
+    client.on("login", () => {
+        client.emit("login", client.id);
+    })
 
     client.on("createRoom", (room) => {
         Room.addRoom(room.name, client.id).then(res => {
@@ -32,13 +34,13 @@ io.on("connection", (client) => {
             client.emit("createRoom", {...room, id: res.insertId});
         });
     })
-    
-    client.on("logout", (id) => {
-        console.log(id);
+
+    client.on("update", (update) => {
+        client.broadcast.emit("update", update);
     })
     client.on("disconnect", () => {
         console.log(`new disconnected (${client.id})`);
-        Room.deleteRoomByUserId(client.id).then(res => {
+        Room.deleteRoomByUserId(client.id).then(() => {
             client.broadcast.emit("getRooms");
         })
     });
