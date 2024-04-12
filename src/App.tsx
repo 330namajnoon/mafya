@@ -10,6 +10,7 @@ class App extends Component<any, GameState> {
   constructor(props: any) {
     super(props);
     this.state = new GameState(this.setState.bind(this));
+    this.state.start();
   }
   componentDidMount(): void {
     

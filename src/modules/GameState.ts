@@ -1,3 +1,4 @@
+import socket from "../socket";
 import Avatars, { Avatar } from "./Avatars";
 import GameRoom from "./GameRoom";
 import God from "./God";
@@ -9,14 +10,22 @@ export default class GameState {
         new Avatar("avatar002", "/assets/avatar002.png"),
     ]);
     god: God | null = null;
-    status: "START" | "GOD" | "USER" = "GOD";
+    status: "START" | "GOD" | "USER" = new URLSearchParams(window.location.search).get("page") as any;
     rooms!: Room[] | null;
-    currentRoom: GameRoom | null = new GameRoom({id: 0, name: "Mi sala"}, new God("Sina"));
+    currentRoom: GameRoom | null = null;
 
     setState: (state: GameState) => void;
 
     constructor(setState: any) {
         this.setState = setState;
+    }
+    
+    start = () => {
+        
+        socket.on("update", (update) => {
+            eval(update);
+            this.setState(this);
+        })
     }
 
     setRooms = (rooms: Room[]) => {
@@ -34,5 +43,11 @@ export default class GameState {
     setStatus = (status: "START" | "GOD" | "USER") => {
         this.status = status;
         this.setState(this);
+    }
+
+    dispatch = (action: any, socketUpdate: string = "") => {
+        this.setState(this);
+        socket.emit("update", socketUpdate);
+        return action;
     }
 }
