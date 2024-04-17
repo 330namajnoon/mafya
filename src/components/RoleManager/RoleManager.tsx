@@ -13,6 +13,10 @@ const RoleManager = () => {
             setRoles([...roles, name])
     }
 
+    const vibrate = () => {
+        gameState.dispatch(null, `this.vibrate()`);
+    }
+
     const share = () => {
         if (currentRoom) {
             let rs = roles;
@@ -20,12 +24,20 @@ const RoleManager = () => {
                 let pos = Math.floor(Math.random() * currentRoom.users.length);
                 let pos1 = Math.floor(Math.random() * rs.length);
                 if (!currentRoom.users[pos].role) {
-                    currentRoom.users[pos].setRole(rs[pos1]);
+                    gameState.userSetRoleById(currentRoom.users[pos].id, rs[pos1]);
                     rs = rs.filter((r, i) => (r && i !== pos1));
                 }
             }
             setRoles(rs);
             setState(gameState);
+            gameState.dispatch(null, `
+                    if (this.currentRoom) {
+                        this.currentRoom.users = value;
+                        this.setState(this);
+                    }
+                `,
+                gameState.currentRoom?.users
+            )
         }
     }
 
@@ -47,6 +59,9 @@ const RoleManager = () => {
             </CreateRoleBack>
             <ShareRolesButton onClick={share}>
                 Compartir
+            </ShareRolesButton>
+            <ShareRolesButton onClick={vibrate}>
+                Vibrate
             </ShareRolesButton>
         </Background>
     )

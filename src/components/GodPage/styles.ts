@@ -14,6 +14,7 @@ export const Background = styled.div`
 
 export const BackgroundTransparent = styled.div`
     width: 100%;
+    min-height: 100%;
     background-color: ${colors[1]};
     display: flex;
     flex-direction: column;

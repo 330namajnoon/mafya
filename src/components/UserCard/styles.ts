@@ -15,6 +15,7 @@ export const Background = styled.div<{width: number, height: number, isSelected:
     margin-left: 5px;
     img {
         max-width: 100%;
+        min-width: 100%;
     }
     
     h3 {
@@ -57,3 +58,15 @@ export const NotActive = styled.div`
     justify-content: center;
     font-size: 20px;
 `;
+
+export const Timer = styled.h3`
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: ${colors[1]};
+`

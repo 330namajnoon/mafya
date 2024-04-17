@@ -6,20 +6,13 @@ export default class User {
     avatar: Avatar;
     isActive: boolean = true;
     role: string | null = null;
+    timer: number = 0;
 
 
     constructor(id: string, name: string, avatar: Avatar) {
         this.id = id;
         this.name = name;
         this.avatar = avatar;
-    }
-
-    setIsActive = (value: boolean) => {
-        this.isActive = value;
-    }
-
-    setRole = (role: string) => {
-        this.role = role;
     }
 
 }

@@ -18,6 +18,10 @@ export default class Avatars {
         this.avatars = avatars;
     }
 
+    getAvatarFromName = (name: string): Avatar => {
+        return this.avatarsLoaded.find(a => a.name === name) as Avatar;
+    }
+
     load = (callback: (lenght: number) => void) => {
 
         this.avatars.forEach(a => {
