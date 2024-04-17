@@ -21,7 +21,7 @@ server.app.get("/", (req, res) => {
 })
 
 server.app.get("/mafya-client", (req, res) => {
-    res.sendFile(path.join(__dirname, "../server/dist/"), "index.html")
+    res.sendFile(path.join(__dirname, "./dist/"), "index.html")
 })
 
 io.on("connection", (client) => {
