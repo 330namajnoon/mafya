@@ -8,6 +8,11 @@ export type GetRoomsResponse = {
     rooms: Room[];
 }
 
+export type UploadFileResponse = {
+    status: number;
+    filePath: string;
+}
+
 const getRooms = (gameState: GameState) => {
     axios.get<GetRoomsResponse>(`${serverURL}/rooms`).then(res => {
         gameState.setRooms(res.data.rooms);
@@ -17,4 +22,20 @@ const getRooms = (gameState: GameState) => {
     })
 }
 
-export {getRooms};
+const uploadFile = (gameState: GameState, file: File) => {
+    if (gameState.currentRoom) {
+        const formData = new FormData();
+        formData.append("roomId", gameState.currentRoom.roomData.id + "");
+        formData.append("file", file);
+        axios.post<UploadFileResponse>(`${serverURL}/uploadFile`, formData).then((res) => {
+            gameState.dispatch(gameState.setMuzicIsUploaded(true, res.data.filePath), `
+                this.setMuzicIsUploaded(true, "${res.data.filePath}")
+                console.log(this)
+            `);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+}
+
+export {getRooms, uploadFile};

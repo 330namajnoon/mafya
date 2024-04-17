@@ -7,6 +7,8 @@ const colors = [
     "#D3D3D3",
     "#626262",
     "#2B2B2B",
+    "rgba(255, 255, 255, 0.41)",
+    "rgba(255, 0, 0, 0.39)",
 ]
 
 export {serverURL, colors};
