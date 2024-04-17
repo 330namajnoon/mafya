@@ -33,15 +33,25 @@ io.on("connection", (client) => {
             client.broadcast.emit("getRooms");
             client.emit("createRoom", {...room, id: res.insertId});
         });
+
     })
 
-    client.on("update", (update) => {
-        client.broadcast.emit("update", update);
+    client.on("getRoomData", (roomId, user) => {
+        io.emit(`getRoomData_${roomId}`, user);
+    })
+
+    client.on("sendCurrentRoom", (room) => {
+        io.emit("sendCurrentRoom", room);
+    })
+
+    client.on("update", (roomId, update, updateValue) => {
+        client.broadcast.emit(`update_${roomId}`, update, updateValue);
     })
     client.on("disconnect", () => {
         console.log(`new disconnected (${client.id})`);
         Room.deleteRoomByUserId(client.id).then(() => {
             client.broadcast.emit("getRooms");
         })
+        io.emit("userLogout", client.id);
     });
 })
