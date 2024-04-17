@@ -1,5 +1,6 @@
 const { Server } = require("sm-express-server");
 const { Server: SocketIo } = require("socket.io");
+const path = require("path");
 const bodyParser = require("body-parser");
 const controllers = require("./endpoints");
 const Room = require("./modules/Room");
@@ -17,6 +18,10 @@ server.start(() => {
 
 server.app.get("/", (req, res) => {
     res.send(`server is up on port ${port}!`);
+})
+
+server.app.get("/mafya-client", (req, res) => {
+    res.sendFile(path.join(__dirname, "../server/dist/"), "index.html")
 })
 
 io.on("connection", (client) => {
