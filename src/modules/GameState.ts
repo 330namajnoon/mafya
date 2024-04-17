@@ -68,7 +68,7 @@ export default class GameState {
         if (this.currentRoom) {
             this.currentRoom.usersSelected.forEach(user => {
                 if (user.id === this.me?.id && this.currentRoom)
-                    window.navigator.vibrate([200, 300, 500, 100]);
+                    window.navigator.vibrate([500, 500, 500]);
             })
         }
     }

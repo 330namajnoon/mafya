@@ -7,6 +7,9 @@ import User from "../../modules/User";
 import GameRoom from "../../modules/GameRoom";
 import UserCard from "../UserCard";
 
+const width = window.innerWidth;
+const height = window.innerHeight;
+
 const UserPage = () => {
     const gameState = useContext(appContext);
 
@@ -61,7 +64,7 @@ const UserPage = () => {
         if (me)
             return (
                 <Background>
-                    <UserCard width={window.innerWidth} height={window.innerHeight} user={me} />
+                    <UserCard width={width} height={height} user={me} />
                 </Background>
             )
     }
