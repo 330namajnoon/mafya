@@ -4,8 +4,9 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const controllers = require("./endpoints");
 const Room = require("./modules/Room");
+require("dotenv").config();
 
-const port = process.env.PORT || 5454;
+const port = process.env.PORT || 4000;
 
 const server = new Server(port, "/", [bodyParser.json()]);
 server.addControllers(controllers);
@@ -37,6 +38,8 @@ io.on("connection", (client) => {
         Room.addRoom(room.name, client.id).then(res => {
             client.broadcast.emit("getRooms");
             client.emit("createRoom", {...room, id: res.insertId});
+        }).catch(err => {
+            
         });
 
     })
@@ -55,6 +58,8 @@ io.on("connection", (client) => {
     client.on("disconnect", () => {
         console.log(`new disconnected (${client.id})`);
         Room.deleteRoomByUserId(client.id).then(() => {
+            client.broadcast.emit("getRooms");
+        }).catch(err => {
             client.broadcast.emit("getRooms");
         })
         io.emit("userLogout", client.id);

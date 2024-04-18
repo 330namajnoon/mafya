@@ -2,7 +2,7 @@ const errors = require("../endpoints/errors");
 const connection = require("../endpoints/mysqlConnection");
 
 class Room {
-
+    static rooms = [];
     /**
      * 
      * @param {number} id
@@ -18,6 +18,9 @@ class Room {
      * @returns {Promise<Room[]>}
      */
     static getRooms() {
+        return new Promise((resolve) => {
+            resolve(this.rooms);
+        })
         return new Promise((resolve, reject) => {
             const getRoomsQuery = `
                 SELECT * FROM rooms
@@ -33,11 +36,17 @@ class Room {
 
     /**
      * 
+     * @param {number} id
      * @param {string} name
      * @param {string} userId
      * @returns {Promise<any>}
      */
     static addRoom(name, userId) {
+        return new Promise((resolve, reject) => {
+            const res = {insertId: this.rooms.length};
+            this.rooms.unshift({id: res.insertId, name, userId});
+            resolve(res);
+        });
         return new Promise((resolve, reject) => {
             const addRoomQuery = `
                 INSERT INTO rooms (name, userId) VALUES (?, ?);
@@ -52,6 +61,10 @@ class Room {
     }
 
     static deleteRoomByUserId(userId) {
+        return new Promise((resolve, reject) => {
+            this.rooms = this.rooms.filter(r => r.userId !== userId);
+            resolve({});
+        });
         return new Promise((resolve, reject) => {
             const deleteRoomByUserIdQuery = `
                 DELETE FROM rooms WHERE userId = '${userId}'
