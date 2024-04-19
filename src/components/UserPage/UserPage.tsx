@@ -7,6 +7,8 @@ import User from "../../modules/User";
 import GameRoom from "../../modules/GameRoom";
 import UserCard from "../UserCard";
 import { serverURL } from "../../config";
+import { Button } from "../GodPage/styles";
+import VoteCard from "../VoteCard";
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -30,73 +32,46 @@ const UserPage = () => {
         socket.emit(`getRoomData`, roomId, user);
     }
 
-    const setSearchParams = (name: string, value: string) => {
-        const searsh = new URLSearchParams(window.location.search);
-        searsh.set(name, value);
-        history.pushState(null, "",window.location.pathname + "?" + searsh.toString());
-    }
-
-   
 
     useEffect(() => {
         getRooms(gameState);
-        socket.emit("login");
-        socket.on("login", (id) => {
-            setUserState({ ...userState, id });
-            setStatus("ROOMS_LIST");
-        })
+    }, [])
 
-        socket.on(`${gameState.currentRoom?.roomData.id}_sendRoomData`, (room: GameRoom) => {
-            console.log(room);
-        });
+    useEffect(() => {
+        if (gameState.rooms) {
+            socket.emit("login");
+            socket.on("login", (id) => {
+                const search = new URLSearchParams(window.location.search);
+                const roomId = search.get("roomId");
+                const userName = search.get("userName");
+                const avatarName = search.get("avatarName");
+                if (roomId && userName && avatarName && gameState.rooms && gameState.rooms.find(r => r.id === parseInt(roomId))) {
+                    const user = new User(id, userName, gameState.avatars.getAvatarFromName(avatarName));
+                    roomRegister(parseInt(roomId), user);
+                    gameState.setMe(user);
+                } else {
+                    setUserState({ ...userState, id });
+                    setStatus("ROOMS_LIST");
+                }
+            })
 
-        socket.on("sendCurrentRoom", (room: GameRoom) => {
-            if (gameState.currentRoom) {
-                gameState.updateCurrentRoom(room);
-            } else {
-                console.log(room)
-                gameState.setCurrentRoom(room.roomData, null);
-                gameState.dispatch(gameState.updateCurrentRoom(room));
-            }
-            gameState.start();
-            setStatus("PLAY");
-        })
+            socket.on("sendCurrentRoom", (room: GameRoom) => {
+                if (gameState.currentRoom) {
+                    gameState.updateCurrentRoom(room);
+                } else {
+                    gameState.setCurrentRoom(room.roomData, null);
+                    gameState.dispatch(gameState.updateCurrentRoom(room));
+                }
+                gameState.start();
+                setStatus("PLAY");
+            })
+        }
         return () => {
             socket.off("login", (id) => {
                 console.log(id);
             });
         }
-    }, [])
-
-    useEffect(() => {
-        if (gameState.rooms) {
-            switch (status) {
-                case "ROOMS_LIST":
-                    const id = new URLSearchParams(window.location.search).get("roomId");
-                    if (id) {
-                        setRoomId(parseInt(id));
-                        setStatus("USER_NAME");
-                    }
-                    break;
-                case "USER_NAME":
-                    const userName = new URLSearchParams(window.location.search).get("userName");
-                    if (userName) {
-                        setUserState({ ...userState, name: userName });
-                        setStatus("AVATARS_LIST");
-                    }
-                    break;
-                case "AVATARS_LIST":
-                    const avatarName = new URLSearchParams(window.location.search).get("avatarName");
-                    if (avatarName) {
-                        setUserState({ ...userState, avatar: gameState.avatars.getAvatarFromName(avatarName) });
-                        setStatus("PLAY");
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }, [gameState.rooms, status]);
+    }, [gameState.rooms])
 
 
     const getStep = () => {
@@ -108,7 +83,7 @@ const UserPage = () => {
                             <button onClick={() => {
                                 setRoomId(room.id);
                                 setStatus("USER_NAME");
-                                setSearchParams("roomId", room.id + "");
+                                gameState.setSearchParams("roomId", room.id + "");
                             }} key={i}>
                                 {room.name}
                             </button>
@@ -119,9 +94,9 @@ const UserPage = () => {
                 return (
                     <UserNameStepBack>
                         <input onChange={(e) => {
-                            setUserState({...userState, name: e.target.value});
-                            setSearchParams("userName", e.target.value);
-                        }} type="text" placeholder="Tu nombre" className="userName"/>
+                            setUserState({ ...userState, name: e.target.value });
+                            gameState.setSearchParams("userName", e.target.value);
+                        }} type="text" placeholder="Tu nombre" className="userName" />
                         <button onClick={() => {
                             setStatus("AVATARS_LIST");
                         }} className="userNameButton">
@@ -133,13 +108,13 @@ const UserPage = () => {
             case "AVATARS_LIST":
                 return (
                     <AvatarsListBack>
-                        { gameState.avatars.avatars.map((avatar, i) => (
+                        {gameState.avatars.avatars.map((avatar, i) => (
                             <img onClick={() => {
                                 if (roomId !== null) {
                                     gameState.setMe(userState);
-                                    setUserState({...userState, avatar});
+                                    setUserState({ ...userState, avatar });
                                     roomRegister(roomId, userState);
-                                    setSearchParams("avatarName", avatar.name);
+                                    gameState.setSearchParams("avatarName", avatar.name);
                                 }
                             }} className="avatar" src={serverURL + avatar.path} key={i} />
                         ))}
@@ -148,15 +123,15 @@ const UserPage = () => {
 
             case "PLAY":
                 const user = gameState.currentRoom?.users.find(u => u.id === gameState.me?.id)
-                return user && gameState.me && gameState.currentRoom && (
-                    <UserCard width={width} height={height} user={user} />
-                )
-
+                if (user && gameState.currentRoom && !gameState.currentRoom.vote || ( user && gameState.currentRoom?.vote?.id === gameState.me?.id))
+                    return <UserCard width={width} height={height} user={user} />
+                if (user && gameState.currentRoom && gameState.currentRoom.vote)
+                    return <VoteCard width={width} height={height} user={gameState.currentRoom.vote} />
             default:
                 return null;
         }
     }
-    
+
     return (
         <Background>
             {getStep()}

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import appContext from "../../contexts/AppContext";
-import { Background, BackgroundTransparent, Button, ButtonsBack, StoriesBack, Story, TimeChanger, TimerBack, TimerCup, UserCards } from "./styles";
+import { Background, BackgroundTransparent, Button, ButtonsBack, StoriesBack, Story, TextInput, TimeChanger, TimerBack, TimerCup, UserCards, UserRegisterBack } from "./styles";
 import UserCard from "../UserCard";
 import RoleManager from "../RoleManager";
 import socket from "../../socket";
@@ -10,10 +10,15 @@ import { uploadFile } from "../../actions/rooms";
 
 const GodPage = () => {
     const { currentRoom, dispatch, setCurrentRoom } = useContext(appContext);
-    const [isPlayed, setIsPlayed] = useState(false);
     const gameState = useContext(appContext);
+
+    const [isPlayed, setIsPlayed] = useState(false);
+    const [step, setStep] = useState<"REGISTER" | "PLAY">("REGISTER");
+    const [roomName, setRoomName] = useState("");
+    const [userName, setUserName] = useState("");
     const [time, setTime] = useState<number | null>(null);
     const [fileName, setFileName] = useState("Elige una canción");
+
     const file = useRef(null);
 
     const fileOnchange = () => {
@@ -68,32 +73,26 @@ const GodPage = () => {
 
     useEffect(() => {
         const search = new URLSearchParams(window.location.search);
-        let name = "";
-        if (search.get("roomName"))
-            name = search.get("roomName") as string;
-        else
-            name = prompt("Escribe un nombre para tu sala: ") as string;
-        if (name && name.length > 0) {
-            socket.emit("createRoom", new Room(0, name));
+        const name = search.get("adminName");
+        const roomName = search.get("roomName")
+
+        if (name && roomName) {
+            setRoomName(roomName);
+            setUserName(name);
+            socket.emit("createRoom", new Room(0, roomName));
         }
         socket.on("createRoom", (roomData: Room) => {
-            let name = "";
-            if (search.get("adminName"))
-                name = search.get("adminName") as string;
-            else
-                name = prompt("Tu nombre: ") as string;
-            if (name && name.length > 0) {
-                const god = new User(roomData.id + "", name, gameState.avatars.getAvatarFromName("avatar001"));
-                const me = god;
-                gameState.dispatch(gameState.setMe(me));
-                setCurrentRoom(roomData, god);
-                gameState.start();
-                console.log(`getRoomData_${roomData.id}`)
-                socket.on(`getRoomData_${roomData.id}`, (user: User) => {
-                    gameState.addUser(user);
-                    socket.emit("sendCurrentRoom", gameState.currentRoom);
-                })
-            }
+            const god = new User(roomData.id + "", userName);
+            const me = god;
+            gameState.dispatch(gameState.setMe(me));
+            setCurrentRoom(roomData, god);
+            setStep("PLAY");
+            gameState.start();
+            console.log(`getRoomData_${roomData.id}`)
+            socket.on(`getRoomData_${roomData.id}`, (user: User) => {
+                gameState.addUser(user);
+                socket.emit("sendCurrentRoom", gameState.currentRoom);
+            })
         })
 
         socket.on("userLogout", (userId: string) => {
@@ -117,53 +116,73 @@ const GodPage = () => {
             setTimerChanger();
     })
 
-    if (currentRoom) {
-        const { users } = currentRoom;
-        return (
-            <Background>
-                <input onChange={fileOnchange} ref={file} type="file" style={{ display: "none" }} />
-                <BackgroundTransparent>
-                    <UserCards>
-                        {users.map((user, index) => (
-                            <UserCard width={160} height={260} key={index} user={user} />
-                        ))}
-                    </UserCards>
-                    <RoleManager />
-                    <ButtonsBack>
+    return (
+        <Background>
+            {step === "REGISTER" || !currentRoom ?
+                (
+                    <UserRegisterBack>
+                        <TextInput onChange={(e) => setUserName(e.target.value)} type="text" placeholder="Nombre de usuario"/>
+                        <TextInput onChange={(e) => setRoomName(e.target.value)} type="text" placeholder="Nombre de sala"/>
                         <Button onClick={() => {
-                            if (file.current) {
-                                let f = file.current as HTMLInputElement;
-                                f.click();
-                            }
-                        }}>{fileName}</Button>
-                        <Button onClick={play_pause}>{isPlayed ? "PAUSE" : "PLAY"}</Button>
-                    </ButtonsBack>
-                    <TimerBack>
-                        <TimerCup id="timerCup">
-                            {time}s
-                            <TimeChanger onTouchMove={timeOnChange} id="timerChanger" />
-                        </TimerCup>
-                        <Button onClick={setUsersTimer}>Aplicar el tiempo</Button>
-                    </TimerBack>
-                    <StoriesBack>
-                        <Button onClick={addNewStory}>Añadir una historia</Button>
-                        {currentRoom.stories.map((story, index) => (
-                            <Story key={index}>
-                                {story.users.map((user, i) => (
-                                    <UserCard key={i} user={user} width={50} height={85} />
+                            if (userName !== "" && roomName !== "")
+                                gameState.setSearchParams("adminName", userName);
+                                gameState.setSearchParams("roomName", roomName);
+                                socket.emit("createRoom", new Room(0, roomName));
+                        }}>Empezar</Button>
+                    </UserRegisterBack>
+                )
+                :
+                (
+                    <>
+                        <input onChange={fileOnchange} ref={file} type="file" style={{ display: "none" }} />
+                        <BackgroundTransparent>
+                            <UserCards>
+                                {currentRoom.users.map((user, index) => (
+                                    <UserCard width={160} height={260} key={index} user={user} style={{marginLeft: "5px"}} />
                                 ))}
-                                <h4>
-                                    {story.description}
-                                </h4>
-                            </Story>
-                        ))}
-                    </StoriesBack>
-                </BackgroundTransparent>
-            </Background>
-        )
-    }
-    else
-        return null
+                            </UserCards>
+                            <RoleManager />
+                            <ButtonsBack>
+                                <Button onClick={() => {
+                                    if (file.current) {
+                                        let f = file.current as HTMLInputElement;
+                                        f.click();
+                                    }
+                                }}>{fileName}</Button>
+                                <Button onClick={play_pause}>{isPlayed ? "PAUSE" : "PLAY"}</Button>
+                            </ButtonsBack>
+                            <TimerBack>
+                                <TimerCup id="timerCup">
+                                    {time}s
+                                    <TimeChanger onTouchMove={timeOnChange} id="timerChanger" />
+                                </TimerCup>
+                                <Button onClick={setUsersTimer}>Aplicar el tiempo</Button>
+                            </TimerBack>
+                            <ButtonsBack>
+                                <Button onClick={() => !gameState.currentRoom?.vote ? gameState.dispatch(gameState.setUserVote(), `this.setUserVote()`) : gameState.dispatch(gameState.unSelectUser("", true), `this.unSelectUser("", true)`)}>{!gameState.currentRoom?.vote ? "Votar" : "Se estan votando"}</Button>
+                                { gameState.getAllVotesLength() > 0 && 
+                                    <Button onClick={() => gameState.dispatch(gameState.resetAllVotes(), `this.resetAllVotes()`)}>Resetear votas</Button>
+                                }
+                            </ButtonsBack>
+                            <StoriesBack>
+                                <Button onClick={addNewStory}>Añadir una historia</Button>
+                                {currentRoom.stories.map((story, index) => (
+                                    <Story key={index}>
+                                        {story.users.map((user, i) => (
+                                            <UserCard key={i} user={user} width={50} height={85} />
+                                        ))}
+                                        <h4>
+                                            {story.description}
+                                        </h4>
+                                    </Story>
+                                ))}
+                            </StoriesBack>
+                        </BackgroundTransparent>
+                    </>
+                )}
+        </Background>
+    )
+
 }
 
 export default GodPage;

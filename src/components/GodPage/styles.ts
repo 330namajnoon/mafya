@@ -117,3 +117,25 @@ export const Story = styled.div`
         margin-left: 5px;
     }
 `;
+
+export const UserRegisterBack = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    box-sizing: border-box;
+`;
+
+export const TextInput = styled.input`
+    width: 93%;
+    background-color: ${colors[1]};
+    border-radius: 5px;
+    border: solid 0.5px ${colors[2]};
+    color: ${colors[2]};
+    font-size: 20px;
+    padding: 10px;
+    margin-top: 10px;
+`;

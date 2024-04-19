@@ -6,7 +6,11 @@ export default class User {
     avatar: Avatar | null;
     isActive: boolean = true;
     role: string | null = null;
+    muzicFile: HTMLAudioElement | null = null;
+    muzicIsUploaded = false;
+    muzicIsPlayed: boolean = false;
     timer: number = 0;
+    votes: string[] = [];
 
 
     constructor(id: string, name: string, avatar: Avatar | null = null) {

@@ -3,6 +3,7 @@ import AppContext from "./contexts/AppContext";
 import GodPage from "./components/GodPage/GodPage";
 import StartPage from "./components/StartPage";
 import UserPage from "./components/UserPage";
+
 const Game = () => {
     const [loading, setLoading] = useState(true);
     const gameState = useContext(AppContext);
@@ -12,7 +13,7 @@ const Game = () => {
     })
     const page = () => {
         switch (gameState.status) {
-            case "START":        
+            case "START":
                 return <StartPage />
             case "GOD":
                 return <GodPage />

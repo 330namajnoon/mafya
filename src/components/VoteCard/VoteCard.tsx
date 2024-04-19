@@ -1,16 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { serverURL } from "../../config";
 import User from "../../modules/User";
-import { Background, NotActive, Role, Timer, UserName, Votes } from "./styles";
+import { Background, Button, NotActive, Role, Timer, UserName, Votes } from "./styles";
 import appContext from "../../contexts/AppContext";
 
-const UserCard = (props: { user: User, width: number, height: number, style?: React.CSSProperties | undefined }) => {
+const VoteCard = (props: { user: User, width: number, height: number }) => {
     const [timeOut, setTimeOut] = useState<NodeJS.Timeout | null>();
     const [isSelected, setIsSelected] = useState(false);
     const gameState = useContext(appContext);
     const { avatar, name, role, isActive, id, votes } = props.user;
     const isGod = (gameState.me?.id === gameState.god?.id);
     const [timer, setTimer] = useState(props.user.timer);
+
+    const vote = (YN: boolean = true) => {
+        if (YN) {
+            if (gameState.currentRoom && gameState.currentRoom.vote && gameState.me) {
+                gameState.dispatch(gameState.vote(gameState.me?.id), `this.vote("${gameState.me?.id}")`);
+                gameState.dispatch(gameState.currentRoom.vote = null);
+            }
+        } else {
+            if (gameState.currentRoom && gameState.currentRoom.vote)
+                gameState.dispatch(gameState.currentRoom.vote = null);
+        }
+    }
 
     const setSelected = () => {
         if (!isSelected)
@@ -56,7 +68,7 @@ const UserCard = (props: { user: User, width: number, height: number, style?: Re
     })
 
     return (
-        <Background style={props.style} onClick={isGod ? setSelected : () => { }} width={props.width} height={props.height} isSelected={gameState.currentRoom ? gameState.currentRoom.usersSelected.some(u => u.id === id) : false} backUrl={serverURL + avatar?.path}>
+        <Background onClick={isGod ? setSelected : () => { }} width={props.width} height={props.height} isSelected={gameState.currentRoom ? gameState.currentRoom.usersSelected.some(u => u.id === id) : false} backUrl={serverURL + avatar?.path}>
             {role && isGod &&
                 <Role width={props.width}>
                     <h2>
@@ -64,18 +76,21 @@ const UserCard = (props: { user: User, width: number, height: number, style?: Re
                     </h2>
                 </Role>
             }
-            {isGod &&
-                <Votes width={props.width}>
-                    <h2>
-                        {votes.length}
-                    </h2>
-                </Votes>
-            }
             <UserName width={props.width}>
                 <h2>
                     {name}
                 </h2>
             </UserName>
+
+            <Votes width={props.width}>
+                <h2>
+                    {votes.length}
+                </h2>
+            </Votes>
+
+            <Button onClick={() => vote()}>Vota</Button>
+            <Button onClick={() => vote(false)}>No quiero votar</Button>
+
             {!isActive &&
                 <NotActive>
                     Fuera
@@ -90,4 +105,4 @@ const UserCard = (props: { user: User, width: number, height: number, style?: Re
     )
 }
 
-export default UserCard;
+export default VoteCard;

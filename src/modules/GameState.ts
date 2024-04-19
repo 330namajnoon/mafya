@@ -36,6 +36,12 @@ export default class GameState {
             })
     }
 
+    setSearchParams = (name: string, value: string) => {
+        const searsh = new URLSearchParams(window.location.search);
+        searsh.set(name, value);
+        history.pushState(null, "",window.location.pathname + "?" + searsh.toString());
+    }
+
     setRooms = (rooms: Room[]) => {
         this.rooms = rooms;
         this.setState(this);
@@ -64,6 +70,29 @@ export default class GameState {
     }
 
     // current room //
+    getAllVotesLength = () => {
+        let len = 0;
+        if (this.currentRoom) {
+            this.currentRoom.users.forEach(user => {
+                len += user.votes.length;
+            })
+        }
+        return len;
+    }
+
+    resetAllVotes = () => {
+        if (this.currentRoom) {
+            this.currentRoom.users.forEach(user => {
+                user.votes = [];
+            })
+        }
+    }
+
+    setUserVote = () => {
+        if (this.currentRoom)
+            this.currentRoom.vote = this.currentRoom.usersSelected[0];
+    }
+
     vibrate = () => {
         if (this.currentRoom) {
             this.currentRoom.usersSelected.forEach(user => {
@@ -75,22 +104,25 @@ export default class GameState {
 
     setMuzicIsUploaded = (value: boolean, path: string) => {
         if (this.currentRoom) {
-            this.currentRoom.muzicFile = window.document.createElement("audio");
-            this.currentRoom.muzicFile.src = serverURL + path;
-            const this_ = this;
-            this.currentRoom.muzicFile.oncanplaythrough = function () {
-                if (this_.currentRoom)
-                    this_.currentRoom.muzicIsUploaded = value;
-            };
+            this.currentRoom.usersSelected.forEach(user => {
+                if (user.id === this.me?.id) {
+                    user.muzicFile = window.document.createElement("audio");
+                    user.muzicFile.src = serverURL + path;
+                    user.muzicFile.oncanplaythrough = function () {
+                        user.muzicIsUploaded = value;
+                    };
+                }
+            })
         }
     }
 
     muzicPlay = () => {
         if (this.currentRoom) {
             this.currentRoom.usersSelected.forEach(user => {
-                if (user.id === this.me?.id && this.currentRoom && !this.currentRoom.muzicIsPlayed && this.currentRoom.muzicFile) {
-                    this.currentRoom.muzicFile.play();
-                    this.currentRoom.muzicIsPlayed = true;
+                console.log(!user.muzicIsPlayed)
+                if (user.id === this.me?.id && !user.muzicIsPlayed && user.muzicFile) {
+                    user.muzicFile.play();
+                    user.muzicIsPlayed = true;
                 }
             })
         }
@@ -99,18 +131,13 @@ export default class GameState {
     muzicPause = () => {
         if (this.currentRoom) {
             this.currentRoom.usersSelected.forEach(user => {
-                if (user.id === this.me?.id && this.currentRoom && this.currentRoom.muzicIsPlayed && this.currentRoom.muzicFile) {
-                    this.currentRoom.muzicFile.pause();
-                    this.currentRoom.muzicFile.currentTime = 0;
-                    this.currentRoom.muzicIsPlayed = false;
+                if (user.id === this.me?.id && user.muzicIsPlayed && user.muzicFile) {
+                    user.muzicFile.pause();
+                    user.muzicFile.currentTime = 0;
+                    user.muzicIsPlayed = false;
                 }
             })
         }
-    }
-
-    setMuzicIsPlayed = (value: boolean) => {
-        if (this.currentRoom)
-            this.currentRoom.muzicIsPlayed = value;
     }
 
     setUsersTimer = (time: number) => {
@@ -140,10 +167,19 @@ export default class GameState {
         }
     }
 
-    unSelectUser = (id: string) => {
-        if (this.currentRoom)
+    unSelectUser = (id: string, all: boolean = false) => {
+        if (this.currentRoom && !all) {
             if (this.currentRoom.usersSelected.some(u => u.id === id))
                 this.currentRoom.usersSelected = this.currentRoom.usersSelected.filter(u => u.id !== id);
+            if (this.currentRoom.usersSelected.length === 0)
+                this.currentRoom.vote = null
+        } else {
+            if (this.currentRoom) {
+                this.currentRoom.usersSelected = [];
+                if (this.currentRoom.usersSelected.length === 0)
+                    this.currentRoom.vote = null
+            }
+        }
     }
 
     addStory = (description: string) => {
@@ -152,6 +188,12 @@ export default class GameState {
     }
 
     // User //
+    vote = (userId: string) => {
+        if (this.currentRoom && this.currentRoom.vote && !this.currentRoom.vote.votes.find(v => v === userId)) {
+            this.currentRoom.vote.votes.push(userId);
+        }
+    }
+    
     getUserById = (id: string): User | undefined => {
         if (this.currentRoom) {
             const user = this.currentRoom.users.find(u => u.id === id);
