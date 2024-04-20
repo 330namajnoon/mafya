@@ -3,6 +3,8 @@ import AppContext from "./contexts/AppContext";
 import GodPage from "./components/GodPage/GodPage";
 import StartPage from "./components/StartPage";
 import UserPage from "./components/UserPage";
+import { colors } from "./config";
+import Loading from "./components/Loading";
 
 const Game = () => {
     const [loading, setLoading] = useState(true);
@@ -23,8 +25,17 @@ const Game = () => {
     }
 
     if (loading)
-        return <div>Loading</div>
-    return page();
+        return <Loading />
+    return (
+        <>
+            <span onClick={() => {
+                window.location.search = "?page=START";
+            }} style={{fontSize: "30px", padding: "10px", color: colors[2], backgroundColor: colors[4], width: "100%", textShadow: `4px 4px ${colors[2] + 70}`}} className="material-symbols-outlined">
+                home
+            </span>
+            {page()}
+        </>
+    )
 }
 
 export default Game;

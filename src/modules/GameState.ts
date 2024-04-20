@@ -11,6 +11,35 @@ export default class GameState {
     avatars: Avatars = new Avatars([
         new Avatar("avatar001", "/assets/avatar001.png"),
         new Avatar("avatar002", "/assets/avatar002.png"),
+        new Avatar("avatar003", "/assets/avatar003.jpg"),
+        new Avatar("avatar004", "/assets/avatar004.jpg"),
+        new Avatar("avatar005", "/assets/avatar005.jpg"),
+        new Avatar("avatar006", "/assets/avatar006.jpg"),
+        new Avatar("avatar007", "/assets/avatar007.jpg"),
+        new Avatar("avatar008", "/assets/avatar008.jpg"),
+        new Avatar("avatar009", "/assets/avatar009.jpg"),
+        new Avatar("avatar010", "/assets/avatar010.jpg"),
+        new Avatar("avatar011", "/assets/avatar011.jpg"),
+        new Avatar("avatar012", "/assets/avatar012.jpg"),
+        new Avatar("avatar013", "/assets/avatar013.jpg"),
+        new Avatar("avatar014", "/assets/avatar014.jpg"),
+        new Avatar("avatar015", "/assets/avatar015.jpg"),
+        new Avatar("avatar016", "/assets/avatar016.jpg"),
+        new Avatar("avatar017", "/assets/avatar017.jpg"),
+        new Avatar("avatar018", "/assets/avatar018.jpg"),
+        new Avatar("avatar019", "/assets/avatar019.jpg"),
+        new Avatar("avatar020", "/assets/avatar020.jpg"),
+        new Avatar("avatar021", "/assets/avatar021.jpg"),
+        new Avatar("avatar022", "/assets/avatar022.jpg"),
+        new Avatar("avatar023", "/assets/avatar023.jpg"),
+        new Avatar("avatar024", "/assets/avatar024.jpg"),
+        new Avatar("avatar025", "/assets/avatar025.jpg"),
+        new Avatar("avatar026", "/assets/avatar026.jpg"),
+        new Avatar("avatar027", "/assets/avatar027.jpg"),
+        new Avatar("avatar028", "/assets/avatar028.jpg"),
+        new Avatar("avatar029", "/assets/avatar029.jpg"),
+        new Avatar("avatar030", "/assets/avatar030.jpg"),
+        new Avatar("avatar031", "/assets/avatar031.jpg"),
     ]);
     god: User | null = null;
     status: "START" | "GOD" | "USER" = new URLSearchParams(window.location.search).get("page") as any;
@@ -184,7 +213,7 @@ export default class GameState {
 
     addStory = (description: string) => {
         if (this.currentRoom)
-            this.currentRoom.stories.unshift(new Story(this.currentRoom.usersSelected, description));
+            this.currentRoom.stories.unshift(new Story(this.currentRoom.usersSelected.map(user => ({...user})), description));
     }
 
     // User //

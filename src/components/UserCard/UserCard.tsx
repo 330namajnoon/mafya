@@ -77,7 +77,7 @@ const UserCard = (props: { user: User, width: number, height: number, style?: Re
                 </h2>
             </UserName>
             {!isActive &&
-                <NotActive>
+                <NotActive width={props.width}>
                     Fuera
                 </NotActive>
             }

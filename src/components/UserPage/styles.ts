@@ -74,12 +74,13 @@ export const AvatarsListBack = styled.div`
     box-sizing: border-box;
     overflow-y: auto;
     background-color: ${colors[5]};
-
+    justify-content: space-evenly;
     .avatar {
         all: inherit;
         max-width: 100px;
         max-height: 180px;
         margin-left: 5px;
         margin-top: 5px;
+        object-fit: cover;
     }
 `;

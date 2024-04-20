@@ -26,7 +26,7 @@ const UserPage = () => {
 
     const [roomId, setRoomId] = useState<number | null>(null);
     const [status, setStatus] = useState<keyof UserPageStatusMap>("LOGIN");
-    const [userState, setUserState] = useState<User>(new User("", "", gameState.avatars.getAvatarFromName("avatar001")));
+    const [userState, setUserState] = useState<User>(new User("", ""));
 
     const roomRegister = (roomId: number, user: User) => {
         socket.emit(`getRoomData`, roomId, user);

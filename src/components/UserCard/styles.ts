@@ -68,7 +68,7 @@ export const UserName = styled.div<{width: number}>`
     h2 {
         margin-top: 10px;
         font-size: ${(props) => props.width / 10}px;
-        background-color: transparent;
+        background-color: ${colors[1]};
         border: solid 0.5px ${colors[2]};
         padding: ${(props) => props.width / 50}px ${(props) => props.width / 30}px;
         color: ${colors[2]};
@@ -76,7 +76,7 @@ export const UserName = styled.div<{width: number}>`
     }
 `;
 
-export const NotActive = styled.div`
+export const NotActive = styled.div<{width: number}>`
     width: 100%;
     background-color: ${colors[6]};
     position: absolute;
@@ -86,7 +86,7 @@ export const NotActive = styled.div`
     align-items: center;
     color: ${colors[2]};
     justify-content: center;
-    font-size: 20px;
+    font-size: ${(props) => props.width / 10}px;
 `;
 
 export const Timer = styled.h3`

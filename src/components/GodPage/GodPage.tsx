@@ -88,11 +88,6 @@ const GodPage = () => {
             setCurrentRoom(roomData, god);
             setStep("PLAY");
             gameState.start();
-            console.log(`getRoomData_${roomData.id}`)
-            socket.on(`getRoomData_${roomData.id}`, (user: User) => {
-                gameState.addUser(user);
-                socket.emit("sendCurrentRoom", gameState.currentRoom);
-            })
         })
 
         socket.on("userLogout", (userId: string) => {
@@ -110,6 +105,17 @@ const GodPage = () => {
             })
         }
     }, [])
+
+    useEffect(() => {
+        if (gameState.currentRoom) {
+            console.log(`getRoomData_${gameState.currentRoom.roomData.id}`);
+            socket.on(`getRoomData_${gameState.currentRoom.roomData.id}`, (user: User) => {
+                gameState.addUser(user);
+                console.log(gameState)
+                socket.emit("sendCurrentRoom", gameState.currentRoom);
+            })
+        }
+    }, [gameState.currentRoom])
 
     useEffect(() => {
         if (!time)
