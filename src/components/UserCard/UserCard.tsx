@@ -82,7 +82,7 @@ const UserCard = (props: { user: User, width: number, height: number, style?: Re
                 </NotActive>
             }
             {timer > 0 &&
-                <Timer>
+                <Timer width={props.width}>
                     {timer}s
                 </Timer>
             }

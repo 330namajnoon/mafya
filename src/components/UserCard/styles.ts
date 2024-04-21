@@ -89,7 +89,7 @@ export const NotActive = styled.div<{width: number}>`
     font-size: ${(props) => props.width / 10}px;
 `;
 
-export const Timer = styled.h3`
+export const Timer = styled.h3<{width: number}>`
     width: 100%;
     height: 100%;
     position: absolute;
@@ -98,5 +98,7 @@ export const Timer = styled.h3`
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: ${(props) => props.width / 10}px;
+    color: ${colors[5]};
     background-color: ${colors[1]};
 `
