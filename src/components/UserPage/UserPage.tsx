@@ -113,7 +113,6 @@ const UserPage = () => {
                                 if (roomId !== null) {
                                     gameState.setMe(userState);
                                     setUserState({ ...userState, avatar });
-                                    roomRegister(roomId, userState);
                                     gameState.setSearchParams("avatarName", avatar.name);
                                 }
                             }} className="avatar" src={serverURL + avatar.path} key={i} />
@@ -131,6 +130,11 @@ const UserPage = () => {
                 return null;
         }
     }
+
+    useEffect(() => {
+        if (userState.name !== "" && userState.avatar && userState.id !== "" && roomId !== null)
+            roomRegister(roomId, userState);
+    }, [userState])
 
     return (
         <Background>
