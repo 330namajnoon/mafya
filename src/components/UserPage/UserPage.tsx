@@ -1,13 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { getRooms } from "../../actions/rooms";
 import appContext from "../../contexts/AppContext";
-import { AvatarsListBack, Background, RoomsListBack, UserNameStepBack } from "./styles";
+import { AvatarsListBack, Background, RoomsListBack, ScreenAction, UserNameStepBack } from "./styles";
 import socket from "../../socket";
 import User from "../../modules/User";
 import GameRoom from "../../modules/GameRoom";
 import UserCard from "../UserCard";
 import { serverURL } from "../../config";
-import { Button } from "../GodPage/styles";
 import VoteCard from "../VoteCard";
 
 const width = window.innerWidth;
@@ -24,6 +23,7 @@ export type UserPageStatusMap = {
 const UserPage = () => {
     const gameState = useContext(appContext);
 
+    const [screenClicked, setScreenClicked] = useState(false);
     const [roomId, setRoomId] = useState<number | null>(null);
     const [status, setStatus] = useState<keyof UserPageStatusMap>("LOGIN");
     const [userState, setUserState] = useState<User>(new User("", ""));
@@ -39,21 +39,20 @@ const UserPage = () => {
 
     useEffect(() => {
         if (gameState.rooms) {
-            socket.emit("login");
-            socket.on("login", (id) => {
-                const search = new URLSearchParams(window.location.search);
-                const roomId = search.get("roomId");
-                const userName = search.get("userName");
-                const avatarName = search.get("avatarName");
-                if (roomId && userName && avatarName && gameState.rooms && gameState.rooms.find(r => r.id === parseInt(roomId))) {
-                    const user = new User(id, userName, gameState.avatars.getAvatarFromName(avatarName));
-                    roomRegister(parseInt(roomId), user);
-                    gameState.setMe(user);
-                } else {
-                    setUserState({ ...userState, id });
-                    setStatus("ROOMS_LIST");
-                }
-            })
+            const user: User = JSON.parse(window.localStorage.getItem("user") as string);
+            const search = new URLSearchParams(window.location.search);
+            const roomId = search.get("roomId");
+            const userName = search.get("userName");
+            const avatarName = search.get("avatarName");
+            if (roomId && userName && avatarName && gameState.rooms && gameState.rooms.find(r => r.id === parseInt(roomId))) {
+                user.avatar = gameState.avatars.getAvatarFromName(avatarName);
+                user.name = userName;
+                roomRegister(parseInt(roomId), user);
+                gameState.setMe(user);
+            } else {
+                setUserState({ ...userState, id: user.id});
+                setStatus("ROOMS_LIST");
+            }
 
             socket.on("sendCurrentRoom", (room: GameRoom) => {
                 if (gameState.currentRoom) {
@@ -67,9 +66,7 @@ const UserPage = () => {
             })
         }
         return () => {
-            socket.off("login", (id) => {
-                console.log(id);
-            });
+            socket.off("sendCurrentRoom");
         }
     }, [gameState.rooms])
 
@@ -120,14 +117,12 @@ const UserPage = () => {
                     </AvatarsListBack>
                 )
 
-            case "PLAY":
+            default:
                 const user = gameState.currentRoom?.users.find(u => u.id === gameState.me?.id)
                 if (user && gameState.currentRoom && !gameState.currentRoom.vote || ( user && gameState.currentRoom?.vote?.id === gameState.me?.id))
                     return <UserCard width={width} height={height} user={user} />
                 if (user && gameState.currentRoom && gameState.currentRoom.vote)
                     return <VoteCard width={width} height={height} user={gameState.currentRoom.vote} />
-            default:
-                return null;
         }
     }
 
@@ -138,7 +133,10 @@ const UserPage = () => {
 
     return (
         <Background>
-            {getStep()}
+            <>
+                { !screenClicked && <ScreenAction onClick={() => setScreenClicked(true)} >Haz Click aquí</ScreenAction> }
+                {getStep()}
+            </>
         </Background>
     )
 

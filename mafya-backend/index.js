@@ -25,13 +25,26 @@ server.app.get("/mafya-client", (req, res) => {
     res.sendFile(path.join(__dirname, "./dist/"), "index.html")
 })
 
+const users = [];
+
 io.on("connection", (client) => {
     console.log(`new connected (${client.id})`);
 
     client.emit("getRooms");
 
-    client.on("login", () => {
-        client.emit("login", client.id);
+    client.on("login", (user) => {
+        const findUser = users.find(u => u == user.id);
+        client.emit("login", findUser);
+    })
+
+    client.on("signup", () => {
+        let newId = "";
+
+        while (newId === "" || users.find(u => u === newId)) {
+            newId = "mf-us-" + Math.floor(Math.random() * 1000);
+        }
+        users.push(newId);
+        client.emit("signup", newId);
     })
 
     client.on("createRoom", (room) => {

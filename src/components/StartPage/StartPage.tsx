@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { colors } from "../../config";
 import { Background, Button, Buttons } from "./styles";
 import AppContext from "../../contexts/AppContext";
@@ -9,6 +9,10 @@ const StartPage = () => {
     const setStatus = (status: "GOD" | "USER") => {
         gameState.setStatus(status);
     }
+
+    useEffect(() => {
+        gameState.dispatch(gameState.userReset());
+    }, [])
 
     return (
         <Background>

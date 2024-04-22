@@ -108,10 +108,8 @@ const GodPage = () => {
 
     useEffect(() => {
         if (gameState.currentRoom) {
-            console.log(`getRoomData_${gameState.currentRoom.roomData.id}`);
             socket.on(`getRoomData_${gameState.currentRoom.roomData.id}`, (user: User) => {
                 gameState.addUser(user);
-                console.log(gameState)
                 socket.emit("sendCurrentRoom", gameState.currentRoom);
             })
         }

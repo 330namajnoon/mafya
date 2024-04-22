@@ -1,6 +1,6 @@
 
-// const serverURL = "http://calimocho.duckdns.org:5454";
-const serverURL = "http://localhost:5454";
+const serverURL = "http://calimocho.duckdns.org:5454";
+// const serverURL = "http://localhost:5454";
 
 const colors = [
     "#000000",

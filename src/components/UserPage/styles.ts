@@ -84,3 +84,14 @@ export const AvatarsListBack = styled.div`
         object-fit: cover;
     }
 `;
+
+export const ScreenAction = styled.div`
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    color: ${colors[2]};
+    background-color: ${colors[1]};
+`;

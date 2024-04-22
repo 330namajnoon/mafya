@@ -58,9 +58,9 @@ export default class GameState {
 
     start = () => {
         if (this.currentRoom)
-            socket.on(`update_${this.currentRoom.roomData.id}`, (update: string, value: any) => {
+            socket.on(`update_${this.currentRoom.roomData.id}`, (update: string) => {
                 eval(update);
-                console.log(this, value, update);
+                this.userSave();
                 this.setState(this);
             })
     }
@@ -68,7 +68,7 @@ export default class GameState {
     setSearchParams = (name: string, value: string) => {
         const searsh = new URLSearchParams(window.location.search);
         searsh.set(name, value);
-        history.pushState(null, "",window.location.pathname + "?" + searsh.toString());
+        history.pushState(null, "", window.location.pathname + "?" + searsh.toString());
     }
 
     setRooms = (rooms: Room[]) => {
@@ -148,7 +148,6 @@ export default class GameState {
     muzicPlay = () => {
         if (this.currentRoom) {
             this.currentRoom.usersSelected.forEach(user => {
-                console.log(!user.muzicIsPlayed)
                 if (user.id === this.me?.id && !user.muzicIsPlayed && user.muzicFile) {
                     user.muzicFile.play();
                     user.muzicIsPlayed = true;
@@ -178,8 +177,13 @@ export default class GameState {
     }
 
     addUser = (user: User) => {
-        if (this.currentRoom)
-            this.currentRoom.users.unshift(user);
+        if (this.currentRoom) {
+            let userFind = this.currentRoom.users.find(u => u.id === user.id);
+            if (userFind)
+                userFind = user;
+            else
+                this.currentRoom.users.unshift(user);
+        }
     }
 
     deleteUserById = (id: string) => {
@@ -213,20 +217,33 @@ export default class GameState {
 
     addStory = (description: string) => {
         if (this.currentRoom)
-            this.currentRoom.stories.unshift(new Story(this.currentRoom.usersSelected.map(user => ({...user})), description));
+            this.currentRoom.stories.unshift(new Story(this.currentRoom.usersSelected.map(user => ({ ...user })), description));
     }
 
     // User //
+    userSave = () => {
+        if (this.me) {
+            const userFind = this.getUserById(this.me.id);
+            if (userFind)
+                window.localStorage.setItem("user", JSON.stringify(userFind));
+        }
+    }
+
+    userReset = () => {
+        if (this.me) {
+            window.localStorage.setItem("user", JSON.stringify(new User(this.me.id, "")));
+        }
+    }
+
+    getUserById = (id: string) => {
+        if (this.currentRoom)
+            return this.currentRoom.users.find(user => user.id === id);
+        return null
+    }
+
     vote = (userId: string) => {
         if (this.currentRoom && this.currentRoom.vote && !this.currentRoom.vote.votes.find(v => v === userId)) {
             this.currentRoom.vote.votes.push(userId);
-        }
-    }
-    
-    getUserById = (id: string): User | undefined => {
-        if (this.currentRoom) {
-            const user = this.currentRoom.users.find(u => u.id === id);
-            return user;
         }
     }
 
