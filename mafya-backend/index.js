@@ -25,6 +25,9 @@ server.app.get("/mafya-client", (req, res) => {
     res.sendFile(path.join(__dirname, "./dist/"), "index.html")
 })
 
+/**
+ * @type {{userId: string, clientId: string, roomId: any}[]}
+ */
 const users = [];
 
 io.on("connection", (client) => {
@@ -33,17 +36,21 @@ io.on("connection", (client) => {
     client.emit("getRooms");
 
     client.on("login", (user) => {
-        const findUser = users.find(u => u == user.id);
-        client.emit("login", findUser);
+        const findUser = users.find(u => u.userId == user.id);
+        if (findUser) {
+            findUser.clientId = client.id;
+            client.emit("login", findUser.userId);
+        } else
+            client.emit("login", null);
     })
 
     client.on("signup", () => {
         let newId = "";
 
-        while (newId === "" || users.find(u => u === newId)) {
+        while (newId === "" || users.find(u => u.userId === newId)) {
             newId = "mf-us-" + Math.floor(Math.random() * 1000);
         }
-        users.push(newId);
+        users.push({userId: newId, clientId: client.id, roomId: null});
         client.emit("signup", newId);
     })
 
@@ -58,6 +65,9 @@ io.on("connection", (client) => {
     })
 
     client.on("getRoomData", (roomId, user) => {
+        const findUser = users.find(u => u.userId === user.id);
+        if (findUser)
+            findUser.roomId = roomId;
         io.emit(`getRoomData_${roomId}`, user);
     })
 
@@ -68,7 +78,12 @@ io.on("connection", (client) => {
     client.on("update", (roomId, update, updateValue) => {
         client.broadcast.emit(`update_${roomId}`, update, updateValue);
     })
+
     client.on("disconnect", () => {
+        const findUser = users.find(u => u.clientId === client.id);
+        if (findUser && findUser.roomId) {
+            io.on(`update_${findUser.roomId}`, `this.setUserIsOnline("${findUser.userId}", false)`);
+        }
         console.log(`new disconnected (${client.id})`);
         Room.deleteRoomByUserId(client.id).then(() => {
             client.broadcast.emit("getRooms");
@@ -76,5 +91,6 @@ io.on("connection", (client) => {
             client.broadcast.emit("getRooms");
         })
         io.emit("userLogout", client.id);
+
     });
 })

@@ -32,7 +32,6 @@ const UserPage = () => {
         socket.emit(`getRoomData`, roomId, user);
     }
 
-
     useEffect(() => {
         getRooms(gameState);
     }, [])

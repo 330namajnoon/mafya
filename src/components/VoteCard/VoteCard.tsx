@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { serverURL } from "../../config";
 import User from "../../modules/User";
 import { Background, Button, UserName, Votes } from "./styles";
@@ -6,13 +6,12 @@ import appContext from "../../contexts/AppContext";
 
 const VoteCard = (props: { user: User, width: number, height: number }) => {
     const gameState = useContext(appContext);
-    const { avatar, name, id, votes } = props.user;
+    const { avatar, name, votes } = props.user;
 
     const vote = (YN: boolean = true) => {
         if (YN) {
             if (gameState.currentRoom && gameState.currentRoom.vote && gameState.me) {
                 gameState.dispatch(gameState.vote(gameState.me.id), `this.vote("${gameState.me.id}")`);
-                console.log(gameState.currentRoom)
                 gameState.dispatch(gameState.currentRoom.vote = null);
             }
         } else {

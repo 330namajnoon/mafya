@@ -11,6 +11,7 @@ export default class User {
     muzicIsPlayed: boolean = false;
     timer: number = 0;
     votes: string[] = [];
+    isOnline: boolean = false;
 
 
     constructor(id: string, name: string, avatar: Avatar | null = null) {
