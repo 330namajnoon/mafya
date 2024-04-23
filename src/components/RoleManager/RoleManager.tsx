@@ -54,15 +54,15 @@ const RoleManager = () => {
                     </Role>
                 ))}
                 <CreateRoleButton onClick={createNewRole}>
-                    Crear personajes
+                    Asignar Rol
                 </CreateRoleButton>
+                <ShareRolesButton onClick={share}>
+                    Compartir Roles
+                </ShareRolesButton>
+                <ShareRolesButton onClick={vibrate}>
+                    Vibrar para Identificar
+                </ShareRolesButton>
             </CreateRoleBack>
-            <ShareRolesButton onClick={share}>
-                Compartir
-            </ShareRolesButton>
-            <ShareRolesButton onClick={vibrate}>
-                Vibrate
-            </ShareRolesButton>
         </Background>
     )
 }

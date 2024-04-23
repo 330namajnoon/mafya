@@ -20,7 +20,7 @@ export const BackgroundTransparent = styled.div`
     flex-direction: column;
     overflow-y: auto;
     align-items: center;
-    padding: 20px 0 20px 0px;
+    padding: 20px 0 100px 0px;
     
 `;
 

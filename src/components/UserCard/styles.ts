@@ -48,10 +48,10 @@ export const Votes = styled.div<{width: number}>`
     h2 {
         margin-top: 5px;
         margin-left: 5px;
-        font-size: ${(props) => props.width / 20}px;
-        background-color: transparent;
+        font-size: ${(props) => props.width / 15}px;
+        background-color: ${colors[1]};
         border: solid 0.5px ${colors[2]};
-        padding: ${(props) => props.width / 50}px ${(props) => props.width / 30}px;
+        padding: ${(props) => props.width / 50}px ${(props) => props.width / 25}px;
         color: ${colors[2]};
         border-radius: 100vw;
     }
@@ -70,7 +70,7 @@ export const UserName = styled.div<{width: number}>`
         font-size: ${(props) => props.width / 10}px;
         background-color: ${colors[1]};
         border: solid 0.5px ${colors[2]};
-        padding: ${(props) => props.width / 50}px ${(props) => props.width / 30}px;
+        padding: ${(props) => props.width / 50}px ${(props) => props.width / 15}px;
         color: ${colors[2]};
         border-radius: 100vw;
     }

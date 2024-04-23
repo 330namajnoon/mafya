@@ -17,7 +17,7 @@ const GodPage = () => {
     const [roomName, setRoomName] = useState("");
     const [userName, setUserName] = useState("");
     const [time, setTime] = useState<number | null>(null);
-    const [fileName, setFileName] = useState("Elige una canción");
+    const [fileName, setFileName] = useState("Seleccionar Música");
 
     const file = useRef(null);
 
@@ -153,23 +153,23 @@ const GodPage = () => {
                                         f.click();
                                     }
                                 }}>{fileName}</Button>
-                                <Button onClick={play_pause}>{isPlayed ? "PAUSE" : "PLAY"}</Button>
+                                <Button onClick={play_pause}>{isPlayed ? "PAUSA" : "PLAY"}</Button>
                             </ButtonsBack>
                             <TimerBack>
                                 <TimerCup id="timerCup">
                                     {time}s
                                     <TimeChanger onTouchMove={timeOnChange} id="timerChanger" />
                                 </TimerCup>
-                                <Button onClick={setUsersTimer}>Aplicar el tiempo</Button>
+                                <Button onClick={setUsersTimer}>Definir Límite de Tiempo</Button>
                             </TimerBack>
                             <ButtonsBack>
-                                <Button onClick={() => !gameState.currentRoom?.vote ? gameState.dispatch(gameState.setUserVote(), `this.setUserVote()`) : gameState.dispatch(gameState.unSelectUser("", true), `this.unSelectUser("", true)`)}>{!gameState.currentRoom?.vote ? "Votar" : "Se estan votando"}</Button>
+                                <Button onClick={() => !gameState.currentRoom?.vote ? gameState.dispatch(gameState.setUserVote(), `this.setUserVote()`) : gameState.dispatch(gameState.unSelectUser("", true), `this.unSelectUser("", true)`)}>{!gameState.currentRoom?.vote ? "Compartir Jugador para Votar" : `En Votación: (${gameState.currentRoom.usersSelected[0].name})`}</Button>
                                 { gameState.getAllVotesLength() > 0 && 
-                                    <Button onClick={() => gameState.dispatch(gameState.resetAllVotes(), `this.resetAllVotes()`)}>Resetear votas</Button>
+                                    <Button onClick={() => gameState.dispatch(gameState.resetAllVotes(), `this.resetAllVotes()`)}>Limpiar Votos</Button>
                                 }
                             </ButtonsBack>
                             <StoriesBack>
-                                <Button onClick={addNewStory}>Añadir una historia</Button>
+                                <Button onClick={addNewStory}>Añadir Historia</Button>
                                 {currentRoom.stories.map((story, index) => (
                                     <Story key={index}>
                                         {story.users.map((user, i) => (

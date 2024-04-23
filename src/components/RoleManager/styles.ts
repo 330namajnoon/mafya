@@ -33,7 +33,7 @@ export const CreateRoleButton = styled.button`
 `;
 
 export const ShareRolesButton = styled.button`
-    width: 95%;
+    width: 100%;
     margin-top: 10px;
     background-color: ${colors[1]};
     border-radius: 5px;
