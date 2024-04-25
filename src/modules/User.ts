@@ -1,4 +1,5 @@
 import { Avatar } from "./Avatars";
+import Muzic from "./Muzic";
 
 export default class User {
     id: string;
@@ -6,9 +7,7 @@ export default class User {
     avatar: Avatar | null;
     isActive: boolean = true;
     role: string | null = null;
-    muzicFile: HTMLAudioElement | null = null;
-    muzicIsUploaded = false;
-    muzicIsPlayed: boolean = false;
+    muzic: Muzic | null = null;
     timer: number = 0;
     votes: string[] = [];
     isOnline: boolean = false;

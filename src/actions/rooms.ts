@@ -28,7 +28,7 @@ const uploadFile = (gameState: GameState, file: File) => {
         formData.append("roomId", gameState.currentRoom.roomData.id + "");
         formData.append("file", file);
         axios.post<UploadFileResponse>(`${serverURL}/uploadFile`, formData).then((res) => {
-            gameState.dispatch(null, `this.setMuzicIsUploaded(true, "${res.data.filePath}")`);
+            gameState.dispatch(gameState.uploadMuzic(res.data.filePath), `this.uploadMuzic("${res.data.filePath}")`);
         }).catch(err => {
             console.log(err);
         });

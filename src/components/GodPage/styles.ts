@@ -131,11 +131,19 @@ export const UserRegisterBack = styled.div`
 
 export const TextInput = styled.input`
     width: 93%;
-    background-color: ${colors[1]};
+    background-color: ${colors[4]}99;
     border-radius: 5px;
     border: solid 0.5px ${colors[2]};
     color: ${colors[2]};
     font-size: 20px;
     padding: 10px;
     margin-top: 10px;
+`;
+
+export const Title = styled.h2`
+    font-size: 20px;
+    color: ${colors[2]};
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
 `;
