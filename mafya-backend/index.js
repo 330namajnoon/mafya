@@ -4,6 +4,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const controllers = require("./endpoints");
 const Room = require("./modules/Room");
+const User = require("./modules/User");
 require("dotenv").config();
 
 const port = process.env.PORT || 4000;
@@ -50,6 +51,7 @@ io.on("connection", (client) => {
         while (newId === "" || users.find(u => u.userId === newId)) {
             newId = "mf-us-" + Math.floor(Math.random() * 1000);
         }
+     
         users.push({userId: newId, clientId: client.id, roomId: null});
         client.emit("signup", newId);
     })

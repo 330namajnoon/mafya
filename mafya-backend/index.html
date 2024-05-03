@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #root {
+            
+        }
+
+        #root img {
+            left: 0;
+            top: 0;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        sñdfkvnslkfnbskfnbsñkfnbsñpkfnbspñfkbnsñpkfnbsñlkfnbsñpfknb
+    </div>
+    <script>
+        function createImageWidthCanvas(width, height, points = [{x1: 10, y1: 0, x2: width, y2: 0, r: 5}], color = "#ffffff") {
+            const canvas = window.document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            points.forEach((p, i) => {
+                if (i === 0)
+                    ctx.moveTo(p.x1, p.y1);
+                else
+                    if (p.r)
+                        ctx.arcTo(p.x1, p.y1, p.x2, p.y2, p.r);
+                    else
+                        ctx.lineTo(p.x1, p.y1);
+            })
+            ctx.closePath();
+            ctx.fill();
+            document.querySelector("body").appendChild(canvas);
+            return canvas.toDataURL("image/png");
+        }
+        const width = 200;
+        const height = 100;
+
+        const url = createImageWidthCanvas(width, height, [
+            {x1: 15, y1: 0},
+            {x1: width, y1: 0, x2: width, y2: 5, r: 5},
+            {x1: width, y1: height, x2: width - 5, y2: height, r: 5},
+            {x1: 10, y1: height, x2: 10, y2: height - 5, r: 5},
+
+            {x1: 10, y1: (height / 2) + 10},
+            {x1: 0, y1: (height / 2)},
+            {x1: 10, y1: (height / 2) - 10},
+
+            {x1: 10, y1: 0, x2: 15, y2: 0, r: 5},
+
+            
+
+        ], "#4786bec2");
+
+        // const image = new Image();
+        // image.src = url;
+        // document.querySelector("#root").appendChild(image);
+    </script>
+</body>
+</html>
