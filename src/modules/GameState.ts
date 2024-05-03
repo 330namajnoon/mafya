@@ -177,20 +177,27 @@ export default class GameState {
 		}
 	};
 
-	muzicPlay = () => {
-		if (this.currentRoom) {
-			this.currentRoom.usersSelected.forEach((user) => {
-				if (
-					user.id === this.me?.id &&
-					user.muzic &&
-					!user.muzic.isPlayed &&
-					user.muzic.element
-				) {
-					user.muzic.element.play();
-					user.muzic.isPlayed = true;
+	muzicPlay = (userPlaySeconds: number) => {
+		const play = setInterval(() => {
+			const date = new Date();
+			const seconds = date.getSeconds();
+			if (userPlaySeconds === seconds) {
+				if (this.currentRoom) {
+					this.currentRoom.usersSelected.forEach((user) => {
+						if (
+							user.id === this.me?.id &&
+							user.muzic &&
+							!user.muzic.isPlayed &&
+							user.muzic.element
+						) {
+							user.muzic.element.play();
+							user.muzic.isPlayed = true;
+						}
+					});
 				}
-			});
-		}
+				clearInterval(play);
+			}
+		}, 100)
 	};
 
 	muzicPause = () => {

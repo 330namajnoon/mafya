@@ -63,7 +63,8 @@ const GodPage = () => {
 
 	const play_pause = () => {
 		if (!isPlayed) {
-			gameState.dispatch(null, `this.muzicPlay()`);
+			const seconds = new Date().getSeconds();
+			gameState.dispatch(null, `this.muzicPlay(${seconds + 3})`);
 			setIsPlayed(!isPlayed);
 		} else {
 			gameState.dispatch(null, `this.muzicPause()`);
